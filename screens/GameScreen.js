@@ -9,11 +9,6 @@ const GameScreen = (props) => {
     Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => 0))
   );
 
-  let squares = [];
-  for (let i = 0; i < 9; i++) {
-    squares.push(<TouchableOpacity key={i} style={styles.buttonContainer} />);
-  }
-
   const checkFinish = (playerNum) => {
     //const [possible, setPossible] = useState(0);
     let count = 0;
@@ -115,6 +110,30 @@ const GameScreen = (props) => {
     // 상대의 연결되는 땅 count가 2인곳을 찾음
   };
 
+  const [titleMessage, setTitleMessage] = useState("Start Game!");
+  const [content, setContent] = useState("");
+
+  const changeContent = (key) => {
+    console.log(key);
+    setContent((currentContent) => {
+      if (currentContent === "") setContent("X");
+      else setContent("");
+    });
+  };
+
+  let squares = [];
+  for (let i = 0; i < 9; i++) {
+    squares.push(
+      <TouchableOpacity
+        key={i}
+        style={styles.buttonContainer}
+        onPress={changeContent.bind(this, i)}
+      >
+        <Text style={styles.content}>{content}</Text>
+      </TouchableOpacity>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{titleMessage}</Text>
@@ -154,6 +173,11 @@ const styles = StyleSheet.create({
     width: 300,
     height: 100,
     overflow: "hidden",
+  },
+  content: {
+    fontSize: 80,
+    paddingVertical: 0,
+    textAlign: "center",
   },
   buttonContainer: {
     borderColor: "black",
