@@ -8,6 +8,13 @@ const GameScreen = (props) => {
   for (let i = 0; i < 9; i++) {
     squares.push(<TouchableOpacity key={i} style={styles.buttonContainer} />);
   }
+  const [playGound] = useState(
+    Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => 0))
+  );
+
+  const checkFinish = () => {};
+
+  const computerPlay = () => {};
 
   return (
     <View style={styles.container}>
@@ -39,7 +46,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     textAlign: "center",
-    marginBottom: 20
+    marginBottom: 20,
   },
   row: {
     flexDirection: "row",
