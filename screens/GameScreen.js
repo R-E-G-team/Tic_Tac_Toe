@@ -28,8 +28,6 @@ const GameScreen = (props) => {
     if (count == 0) return 0;
     //(i,i)좌표에 자신의 땅이 하나라도 없으면 승리는 불가능
     else if (count == 3) {
-      setIsRestart(true);
-      setTitleMessage("Win!");
       return playerNum;
     }
 
@@ -39,8 +37,6 @@ const GameScreen = (props) => {
         playGround[i][1] == playerNum &&
         playGround[i][2] == playerNum
       ) {
-        setIsRestart(true);
-        setTitleMessage("Win!");
         return playerNum;
       }
       if (
@@ -48,8 +44,6 @@ const GameScreen = (props) => {
         playGround[1][i] == playerNum &&
         playGround[2][i] == playerNum
       ) {
-        setIsRestart(true);
-        setTitleMessage("Win!");
         return playerNum;
       }
     }
@@ -58,8 +52,6 @@ const GameScreen = (props) => {
       playGround[1][1] == playerNum &&
       playGround[0][2] == playerNum
     ) {
-      setIsRestart(true);
-      setTitleMessage("Win!");
       return playerNum;
     }
     return 0;
@@ -79,10 +71,8 @@ const GameScreen = (props) => {
   };
 
   const getGroundData = (c, r) => {
-    console.log(c + "," + r);
     c = (3 + c) % 3;
     r = (3 + r) % 3;
-    console.log(": to :" + c + "," + r);
     return playGround[c][r];
   };
 
@@ -92,11 +82,8 @@ const GameScreen = (props) => {
     let check = Array.from({ length: 3 }, () =>
       Array.from({ length: 3 }, () => false)
     );
-    console.log('playerNum'+playerNum);
-    console.log(playGround);
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
-        console.log('i'+i+'j'+j);
         // 연결되는 땅 count가 2인곳을 우선 찾음
         if (playGround[i][j] == playerNum) {
           count = getGroundData(i + 1, j) - getGroundData(i - 1, j);
@@ -155,14 +142,12 @@ const GameScreen = (props) => {
     let r = 0;
     //자신의 승리공식을 찾음
     list = checkNextCanWin(playerCode.computer);
-    console.log(list);
     if (list != null) {
       return list;
     }
 
     //사용자의 승리공식을 찾음
     list = checkNextCanWin(playerCode.player);
-    console.log(list);
     if (list != null) {
       return list;
     }
@@ -171,7 +156,6 @@ const GameScreen = (props) => {
     while (true) {
       c = Math.floor(Math.random() * 3);
       r = Math.floor(Math.random() * 3);
-      console.log('random'+c+','+r);
       if (playGround[c][r] == 0) {
         break;
       }
@@ -192,8 +176,20 @@ const GameScreen = (props) => {
     newGround[parseInt(key / 3)][key % 3] = playerCode.player;
 
     if (checkFinish(playerCode.player) == 1) {
+      setTitleMessage("You win!");
       setIsRestart(true);
       return;
+    }
+
+    for (let i = 0; i < 9; i++) {
+      if (newList[i] == "") {
+        break;
+      }
+      if (i == 8) {
+        setTitleMessage("Draw!");
+        setIsRestart(true);
+        return;
+      }
     }
 
     setTitleMessage("Computer turn!");
@@ -210,11 +206,12 @@ const GameScreen = (props) => {
     });
 
     if (checkFinish(playerCode.computer) == 3) {
+      setTitleMessage("Conputer win!");
       setIsRestart(true);
       return;
     }
 
-    setPlayGround(newGround)
+    setPlayGround(newGround);
   };
 
   let squares = [];
