@@ -65,8 +65,7 @@ const GameScreen = (props) => {
   // };
 
   const bound = (num) => {
-    if (num < 0) num = 3 + num;
-    else if (num > 2) num = num - 3;
+    num = (num+3) % 3;
     return num;
   };
 
@@ -109,7 +108,7 @@ const GameScreen = (props) => {
 
     for (let i = 0; i < 3; i++) {
       j = i;
-      if (playGround[i][i] == playerNum) {
+      if (playGround[i][j] == playerNum) {
         count = getGroundData(i + 1, j + 1) - getGroundData(i - 1, j - 1);
         if (count == playerNum) {
           i = bound(i - 1);
@@ -121,7 +120,8 @@ const GameScreen = (props) => {
           return [i, j];
         }
       }
-      if (playGround[i][2 - i] == playerNum) {
+      j = 2 - i;
+      if (playGround[i][j] == playerNum) {
         count = getGroundData(i - 1, j + 1) - getGroundData(i + 1, j - 1);
         if (count == playerNum) {
           i = bound(i + 1);
