@@ -107,7 +107,8 @@ const GameScreen = (props) => {
       }
     }
 
-    for (let i,j = 0; i < 3; i++, j=i) {
+    for (let i = 0; i < 3; i++) {
+      j = i;
       if (playGround[i][i] == playerNum) {
         count = getGroundData(i + 1, j + 1) - getGroundData(i - 1, j - 1);
         if (count == playerNum) {
