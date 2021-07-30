@@ -109,7 +109,7 @@ const GameScreen = (props) => {
           return [i, j];
         }
       }
-      if (playGround[i][2-i] == plyerNum) {
+      if (playGround[i][2-i] == playerNum) {
         count = getGroundData(i - 1, j + 1) - getGroundData(i + 1, j - 1);
         if (count == playerNum) {
           i = i + 1;
@@ -130,13 +130,14 @@ const GameScreen = (props) => {
     const c = 0;
     const r = 0;
     //자신의 승리공식을 찾음
-    list = checkNextCanWin(playerCode.computer);
+    list.concat(checkNextCanWin(playerCode.computer));
     if (list != null){
       return list;
     }
 
+    list.length = 0;
     //사용자의 승리공식을 찾음
-    checkNextCanWin(playerCode.player);
+    list.concat(checkNextCanWin(playerCode.player));
     if (list != null){
       return list;
     }
