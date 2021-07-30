@@ -107,7 +107,7 @@ const GameScreen = (props) => {
       }
     }
 
-    for (let i = 0; i < 3; i++) {
+    for (let i,j = 0; i < 3; i++, j=i) {
       if (playGround[i][i] == playerNum) {
         count = getGroundData(i + 1, j + 1) - getGroundData(i - 1, j - 1);
         if (count == playerNum) {
@@ -153,7 +153,7 @@ const GameScreen = (props) => {
     }
 
     //빈공간중 랜덤으로 채워넣음
-    while (true) {
+    while (!isRestart) {
       c = Math.floor(Math.random() * 3);
       r = Math.floor(Math.random() * 3);
       if (playGround[c][r] == 0) {
