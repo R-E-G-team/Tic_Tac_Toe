@@ -1,5 +1,11 @@
 import React, { useState, useRef } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  SliderComponent,
+} from "react-native";
 
 import playerCode from "../constants/player-code";
 
@@ -109,7 +115,7 @@ const GameScreen = (props) => {
           return [i, j];
         }
       }
-      if (playGround[i][2-i] == playerNum) {
+      if (playGround[i][2 - i] == playerNum) {
         count = getGroundData(i - 1, j + 1) - getGroundData(i + 1, j - 1);
         if (count == playerNum) {
           i = i + 1;
@@ -131,21 +137,21 @@ const GameScreen = (props) => {
     const r = 0;
     //자신의 승리공식을 찾음
     list.concat(checkNextCanWin(playerCode.computer));
-    if (list != null){
+    if (list.length == 0){
       return list;
     }
 
     list.length = 0;
     //사용자의 승리공식을 찾음
     list.concat(checkNextCanWin(playerCode.player));
-    if (list != null){
+    if (list.length == 0){
       return list;
     }
 
     //빈공간중 랜덤으로 채워넣음
     while (true) {
-      c = Math.floor(Math.random() * 3)
-      r = Math.floor(Math.random() * 3)
+      c = Math.floor(Math.random() * 3);
+      r = Math.floor(Math.random() * 3);
       if (playGround[c][r] == 0) {
         break;
       }
@@ -157,14 +163,39 @@ const GameScreen = (props) => {
     const newList = [...content];
     content.map((value, index) => {
       if (index == key) {
-        newList[index] = "X";
-        setContent(newList);
+        if (newList[index] != "X" && newList[index] != "O") {
+          newList[index] == "X";
+          setContent(newList);
+        } else {
+          return;
+        }
       }
     });
-    const newGround = [...playGround];
-    newGround[parseInt(key / 3)][key % 3] = 1;
-    setPlayGround(newGround);
-    console.log(checkFinish(1));
+
+    setTitleMessage("Computer turn!");
+
+    function sleep(time) {
+      return new Promise((resolve) => setTimeout(resolve, time));
+    }
+
+    sleep(2000).then(() => {
+      setTitleMessage("Your turn!");
+      const newGround = [...playGround];
+      newGround[parseInt(key / 3)][key % 3] = 1;
+      if (checkFinish(1) == 0) {
+        const list = computerPlay();
+        console.log(newGround);
+        const checkNum = parseInt(list[0] * 3) + list[1];
+        content.map((value, index) => {
+          if (index == checkNum) {
+            newList[index] = "O";
+            setContent(newList);
+          }
+        });
+      } else {
+        setIsRestart(true);
+      }
+    });
   };
 
   let squares = [];
