@@ -132,19 +132,12 @@ const GameScreen = (props) => {
   };
 
   const computerPlay = () => {
-    const list = [];
-    const c = 0;
-    const r = 0;
+    let list = [];
+    let c = 0;
+    let r = 0;
     //자신의 승리공식을 찾음
-    list.concat(checkNextCanWin(playerCode.computer));
-    if (list.length == 0){
-      return list;
-    }
-
-    list.length = 0;
-    //사용자의 승리공식을 찾음
-    list.concat(checkNextCanWin(playerCode.player));
-    if (list.length == 0){
+    list = checkNextCanWin(playerCode.computer);
+    if (list != null) {
       return list;
     }
 
@@ -161,39 +154,28 @@ const GameScreen = (props) => {
 
   const changeContent = (key, props) => {
     const newList = [...content];
-    content.map((value, index) => {
-      if (index == key) {
-        if (newList[index] != "X" && newList[index] != "O") {
-          newList[index] == "X";
-          setContent(newList);
-        } else {
-          return;
-        }
-      }
-    });
-
-    setTitleMessage("Computer turn!");
-
-    function sleep(time) {
-      return new Promise((resolve) => setTimeout(resolve, time));
+    if (newList[key] == "X" || newList[key] == "O") {
+      return;
+    } else {
+      newList[key] = "X";
+      setContent(newList);
     }
 
-    sleep(2000).then(() => {
-      setTitleMessage("Your turn!");
-      const newGround = [...playGround];
-      newGround[parseInt(key / 3)][key % 3] = 1;
-      if (checkFinish(1) == 0) {
-        const list = computerPlay();
-        console.log(newGround);
-        const checkNum = parseInt(list[0] * 3) + list[1];
-        content.map((value, index) => {
-          if (index == checkNum) {
-            newList[index] = "O";
-            setContent(newList);
-          }
-        });
-      } else {
-        setIsRestart(true);
+    if (checkFinish(playerCode.player) == 1) {
+      setIsRestart(true);
+      return;
+    }
+
+    setTitleMessage("Computer turn!");
+    setTitleMessage("Your turn!");
+    const newGround = [...playGround];
+    newGround[parseInt(key / 3)][key % 3] = 1;
+    const list = computerPlay();
+    const checkNum = parseInt(list[0] * 3) + list[1];
+    content.map((value, index) => {
+      if (index == checkNum) {
+        newList[index] = "O";
+        setContent(newList);
       }
     });
   };
