@@ -1,4 +1,4 @@
 export default {
     player: 1,
-    computer: 2
+    computer: 3
 }

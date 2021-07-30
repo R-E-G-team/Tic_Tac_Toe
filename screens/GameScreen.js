@@ -65,59 +65,92 @@ const GameScreen = (props) => {
     return playGround[c][r];
   };
 
-  const computerPlay = () => {
+  const checkNextCanWin = (playerNum) => {
     let count = 0;
     let j = 0;
     let check = Array.from({ length: 3 }, () =>
       Array.from({ length: 3 }, () => false)
     );
     for (let i = 0; i < 3; i++) {
-      j = i;
-      // 연결되는 땅 count가 2인곳을 우선 찾음
-      if (playGround[i][j] == computer && !check[i][j]) {
-        count = getGroundData(i + 1, j) - getGroundData(i - 1, j);
-        if (count == 2) {
-          i = i - 1;
-          return { i, j };
-        } else if (count == -2) {
-          i = i + 1;
-          return { i, j };
-        }
+      for (let j = 0; j < 3; j++) {
+        // 연결되는 땅 count가 2인곳을 우선 찾음
+        if (playGround[i][j] == playerNum) {
+          count = getGroundData(i + 1, j) - getGroundData(i - 1, j);
+          if (count == playerNum) {
+            i = i - 1;
+            return [i, j];
+          } else if (count == -playerNum) {
+            i = i + 1;
+            return [i, j];
+          }
 
-        count = getGroundData(i, j + 1) - getGroundData(i, j - 1);
-        if (count == 2) {
-          j = j - 1;
-          return { i, j };
-        } else if (count == -2) {
-          j = j + 1;
-          return { i, j };
-        }
-
-        count = getGroundData(i + 1, j + 1) - getGroundData(i - 1, j - 1);
-        if (count == 2) {
-          i = i - 1;
-          j = j - 1;
-          return { i, j };
-        } else if (count == -2) {
-          i = i + 1;
-          j = j + 1;
-          return { i, j };
-        }
-
-        count = getGroundData(i - 1, j + 1) - getGroundData(i + 1, j - 1);
-        if (count == 2) {
-          i = i + 1;
-          j = j - 1;
-          return { i, j };
-        } else if (count == -2) {
-          i = i - 1;
-          j = j + 1;
-          return { i, j };
+          count = getGroundData(i, j + 1) - getGroundData(i, j - 1);
+          if (count == playerNum) {
+            j = j - 1;
+            return [i, j];
+          } else if (count == -playerNum) {
+            j = j + 1;
+            return [i, j];
+          }
         }
       }
     }
 
-    // 상대의 연결되는 땅 count가 2인곳을 찾음
+    for (let i = 0; i < 3; i++) {
+      if (playGround[i][i] == playerNum) {
+        count = getGroundData(i + 1, j + 1) - getGroundData(i - 1, j - 1);
+        if (count == playerNum) {
+          i = i - 1;
+          j = j - 1;
+          return [i, j];
+        } else if (count == -playerNum) {
+          i = i + 1;
+          j = j + 1;
+          return [i, j];
+        }
+      }
+      if (playGround[i][2-i] == plyerNum) {
+        count = getGroundData(i - 1, j + 1) - getGroundData(i + 1, j - 1);
+        if (count == playerNum) {
+          i = i + 1;
+          j = j - 1;
+          return [i, j];
+        } else if (count == -playerNum) {
+          i = i - 1;
+          j = j + 1;
+          return [i, j];
+        }
+      }
+    }
+    return null;
+  };
+
+  const computerPlay = () => {
+    const list = [];
+    const c = 0;
+    const r = 0;
+    //자신의 승리공식을 찾음
+    list = checkNextCanWin(playerCode.computer);
+    if (list != null){
+      return list;
+    }
+
+    //사용자의 승리공식을 찾음
+    checkNextCanWin(playerCode.player);
+    if (list != null){
+      return list;
+    }
+
+    list.push(Math.floor(Math.random() * 3));
+    list.push(Math.floor(Math.random() * 3));
+    while (true) {
+      c = Math.floor(Math.random() * 3)
+      r = Math.floor(Math.random() * 3)
+      if (playGround[c][r] == 0) {
+        break;
+      }
+    }
+    return [c, r];
   };
 
   const changeContent = (key, props) => {
@@ -176,7 +209,7 @@ const GameScreen = (props) => {
             );
             setContent(["", "", "", "", "", "", "", "", ""]);
             setIsRestart(false);
-            setTitleMessage('Game Start!');
+            setTitleMessage("Game Start!");
           }}
         >
           <Text style={styles.restartText}>재 시작!</Text>
