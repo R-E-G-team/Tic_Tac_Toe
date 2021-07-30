@@ -6,8 +6,8 @@ import playerCode from "../constants/player-code";
 const GameScreen = (props) => {
   const [titleMessage, setTitleMessage] = useState("Game Start!");
   const [content, setContent] = useState(["", "", "", "", "", "", "", "", ""]);
-  const playGround = Array.from({ length: 3 }, () =>
-    Array.from({ length: 3 }, () => 0)
+  const [playGround, setPlayGround] = useState(
+    Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => 0))
   );
 
   const checkFinish = (playerNum) => {
@@ -124,7 +124,9 @@ const GameScreen = (props) => {
         setContent(newList);
       }
     });
-    playGround[parseInt(key/3)][key%3] = 1;
+    const newGround = [...playGround];
+    newGround[parseInt(key / 3)][key % 3] = 1;
+    setPlayGround(newGround);
     console.log(checkFinish(1));
   };
 
