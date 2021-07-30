@@ -65,9 +65,24 @@ const GameScreen = (props) => {
     return 0;
   };
 
+  // const bound = num => { // 이게 안되는데 말이 되나..?
+  //   console.log(num);
+  //   num = num % 3;
+  //   console.log(" to " + num);
+  //   return num;
+  // };
+
+  const bound = (num) => {
+    if (num < 0) num = 3 + num;
+    else if (num > 2) num = num - 3;
+    return num;
+  };
+
   const getGroundData = (c, r) => {
-    if (c < 0) c = 3 + c;
-    if (r < 0) r = 3 + r;
+    console.log(c + "," + r);
+    c = (3 + c) % 3;
+    r = (3 + r) % 3;
+    console.log(": to :" + c + "," + r);
     return playGround[c][r];
   };
 
@@ -77,25 +92,28 @@ const GameScreen = (props) => {
     let check = Array.from({ length: 3 }, () =>
       Array.from({ length: 3 }, () => false)
     );
+    console.log('playerNum'+playerNum);
+    console.log(playGround);
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
+        console.log('i'+i+'j'+j);
         // 연결되는 땅 count가 2인곳을 우선 찾음
         if (playGround[i][j] == playerNum) {
           count = getGroundData(i + 1, j) - getGroundData(i - 1, j);
           if (count == playerNum) {
-            i = i - 1;
+            i = bound(i - 1);
             return [i, j];
           } else if (count == -playerNum) {
-            i = i + 1;
+            i = bound(i + 1);
             return [i, j];
           }
 
           count = getGroundData(i, j + 1) - getGroundData(i, j - 1);
           if (count == playerNum) {
-            j = j - 1;
+            j = bound(j - 1);
             return [i, j];
           } else if (count == -playerNum) {
-            j = j + 1;
+            j = bound(j + 1);
             return [i, j];
           }
         }
@@ -106,24 +124,24 @@ const GameScreen = (props) => {
       if (playGround[i][i] == playerNum) {
         count = getGroundData(i + 1, j + 1) - getGroundData(i - 1, j - 1);
         if (count == playerNum) {
-          i = i - 1;
-          j = j - 1;
+          i = bound(i - 1);
+          j = bound(j - 1);
           return [i, j];
         } else if (count == -playerNum) {
-          i = i + 1;
-          j = j + 1;
+          i = bound(i + 1);
+          j = bound(j + 1);
           return [i, j];
         }
       }
       if (playGround[i][2 - i] == playerNum) {
         count = getGroundData(i - 1, j + 1) - getGroundData(i + 1, j - 1);
         if (count == playerNum) {
-          i = i + 1;
-          j = j - 1;
+          i = bound(i + 1);
+          j = bound(j - 1);
           return [i, j];
         } else if (count == -playerNum) {
-          i = i - 1;
-          j = j + 1;
+          i = bound(i - 1);
+          j = bound(j + 1);
           return [i, j];
         }
       }
@@ -137,6 +155,14 @@ const GameScreen = (props) => {
     let r = 0;
     //자신의 승리공식을 찾음
     list = checkNextCanWin(playerCode.computer);
+    console.log(list);
+    if (list != null) {
+      return list;
+    }
+
+    //사용자의 승리공식을 찾음
+    list = checkNextCanWin(playerCode.player);
+    console.log(list);
     if (list != null) {
       return list;
     }
@@ -145,6 +171,7 @@ const GameScreen = (props) => {
     while (true) {
       c = Math.floor(Math.random() * 3);
       r = Math.floor(Math.random() * 3);
+      console.log('random'+c+','+r);
       if (playGround[c][r] == 0) {
         break;
       }
@@ -161,6 +188,9 @@ const GameScreen = (props) => {
       setContent(newList);
     }
 
+    const newGround = [...playGround];
+    newGround[parseInt(key / 3)][key % 3] = playerCode.player;
+
     if (checkFinish(playerCode.player) == 1) {
       setIsRestart(true);
       return;
@@ -168,9 +198,9 @@ const GameScreen = (props) => {
 
     setTitleMessage("Computer turn!");
     setTitleMessage("Your turn!");
-    const newGround = [...playGround];
-    newGround[parseInt(key / 3)][key % 3] = 1;
+
     const list = computerPlay();
+    newGround[list[0]][list[1]] = playerCode.computer;
     const checkNum = parseInt(list[0] * 3) + list[1];
     content.map((value, index) => {
       if (index == checkNum) {
@@ -178,6 +208,13 @@ const GameScreen = (props) => {
         setContent(newList);
       }
     });
+
+    if (checkFinish(playerCode.computer) == 3) {
+      setIsRestart(true);
+      return;
+    }
+
+    setPlayGround(newGround)
   };
 
   let squares = [];
