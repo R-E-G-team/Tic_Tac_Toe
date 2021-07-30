@@ -141,8 +141,7 @@ const GameScreen = (props) => {
       return list;
     }
 
-    list.push(Math.floor(Math.random() * 3));
-    list.push(Math.floor(Math.random() * 3));
+    //빈공간중 랜덤으로 채워넣음
     while (true) {
       c = Math.floor(Math.random() * 3)
       r = Math.floor(Math.random() * 3)
