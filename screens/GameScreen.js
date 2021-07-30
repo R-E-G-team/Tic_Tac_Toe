@@ -6,6 +6,7 @@ import playerCode from "../constants/player-code";
 const GameScreen = (props) => {
   const [titleMessage, setTitleMessage] = useState("Game Start!");
   const [content, setContent] = useState(["", "", "", "", "", "", "", "", ""]);
+  const [isRestart, setIsRestart] = useState(false);
   const [playGround, setPlayGround] = useState(
     Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => 0))
   );
@@ -16,12 +17,12 @@ const GameScreen = (props) => {
     for (let i = 0; i < 3; i++) {
       if (playGround[i][i] == playerNum) {
         count = count + 1;
-        break;
       }
     }
     if (count == 0) return 0;
     //(i,i)좌표에 자신의 땅이 하나라도 없으면 승리는 불가능
     else if (count == 3) {
+      setIsRestart(true);
       setTitleMessage("Win!");
       return playerNum;
     }
@@ -32,6 +33,7 @@ const GameScreen = (props) => {
         playGround[i][1] == playerNum &&
         playGround[i][2] == playerNum
       ) {
+        setIsRestart(true);
         setTitleMessage("Win!");
         return playerNum;
       }
@@ -40,6 +42,7 @@ const GameScreen = (props) => {
         playGround[1][i] == playerNum &&
         playGround[2][i] == playerNum
       ) {
+        setIsRestart(true);
         setTitleMessage("Win!");
         return playerNum;
       }
@@ -49,6 +52,7 @@ const GameScreen = (props) => {
       playGround[1][1] == playerNum &&
       playGround[0][2] == playerNum
     ) {
+      setIsRestart(true);
       setTitleMessage("Win!");
       return playerNum;
     }
@@ -161,6 +165,23 @@ const GameScreen = (props) => {
         {squares[7]}
         {squares[8]}
       </View>
+      {isRestart && (
+        <TouchableOpacity
+          style={styles.restart}
+          onPress={() => {
+            setPlayGround(
+              Array.from({ length: 3 }, () =>
+                Array.from({ length: 3 }, () => 0)
+              )
+            );
+            setContent(["", "", "", "", "", "", "", "", ""]);
+            setIsRestart(false);
+            setTitleMessage('Game Start!');
+          }}
+        >
+          <Text style={styles.restartText}>재 시작!</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -194,6 +215,15 @@ const styles = StyleSheet.create({
     borderWidth: 5,
     width: 100,
     height: 100,
+  },
+  restart: {
+    alignItems: "center",
+    marginTop: 20,
+    padding: 8,
+    backgroundColor: "#ffaaaa",
+  },
+  restartText: {
+    fontSize: 20,
   },
 });
 
